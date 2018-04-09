@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="EmojiSmiley">
+        <attr name="emojiColor" format="color" />
+        <attr name="emojiRadius" format="integer"/>
+        <attr name="emojiRightEyeOpen" format="boolean" />
+        <attr name="emojiLeftEyeOpen" format="boolean" />
+        <attr name="emojiSmile" format="enum">
+            <enum name="happy" value="0" />
+            <enum name="sad" value="1" />
+        </attr>
+    </declare-styleable>
+</resources>
