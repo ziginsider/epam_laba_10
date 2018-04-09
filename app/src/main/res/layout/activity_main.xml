@@ -7,10 +7,9 @@
     tools:context=".MainActivity">
 
     <io.github.ziginsider.epam_laba_10.CustomView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="200dp"
         app:emojiColor="#ffff00"
-        app:emojiRadius="50dp"
         app:emojiLeftEyeOpen="true"
         app:emojiRightEyeOpen="true"
         app:emojiSmile="happy"/>

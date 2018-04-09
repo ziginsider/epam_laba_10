@@ -2,7 +2,6 @@
 <resources>
     <declare-styleable name="CustomView">
         <attr name="emojiColor" format="color" />
-        <attr name="emojiRadius" format="dimension"/>
         <attr name="emojiRightEyeOpen" format="boolean" />
         <attr name="emojiLeftEyeOpen" format="boolean" />
         <attr name="emojiSmile" format="enum">
