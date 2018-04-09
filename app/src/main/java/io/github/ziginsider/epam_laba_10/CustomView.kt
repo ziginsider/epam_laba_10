@@ -3,20 +3,31 @@ package io.github.ziginsider.epam_laba_10
 import android.annotation.TargetApi
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.RectF
 import android.os.Build
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 
-const val COLOR_YELLOW = 16776960
+const val STROKE_EYE = 5F
+const val START_ANGLE_EYE = 15F
+const val SWEEP_ANGLE_CLOSE_EYE = 150F
+const val SWEEP_ANGLE_OPEN_EYE = 360F
 
 class CustomView : View {
 
-    private var color: Int? = null
-    private var openRightEye: Boolean? = null
-    private var openLeftEye: Boolean? = null
-    private var smile: Int? = null
-    private lateinit var paint: Paint
+    private var color: Int = 0
+    private var openRightEye: Boolean = false
+    private var openLeftEye: Boolean = false
+    private var smile: Int = 0
+    private var radius: Float = 0F
+    private lateinit var paintHead: Paint
+    private lateinit var paintParts: Paint
+    private lateinit var rightEyeOval: RectF
+    private lateinit var leftEyeOval: RectF
+
 
     @JvmOverloads
     constructor(context: Context?, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
@@ -37,30 +48,64 @@ class CustomView : View {
 
         val typedArray = context?.obtainStyledAttributes(attrs, R.styleable.CustomView, 0, 0)
         try {
-            color = typedArray?.getColor(R.styleable.CustomView_emojiColor, COLOR_YELLOW)
-            openRightEye = typedArray?.getBoolean(R.styleable.CustomView_emojiRightEyeOpen, true)
-            openLeftEye = typedArray?.getBoolean(R.styleable.CustomView_emojiLeftEyeOpen, true)
-            smile = typedArray?.getInt(R.styleable.CustomView_emojiSmile, 0)
+            typedArray?.let {
+                Log.d("TAG", "initAttr")
+                color = it.getColor(R.styleable.CustomView_emojiColor, Color.YELLOW)
+                openRightEye = it.getBoolean(R.styleable.CustomView_emojiRightEyeOpen, true)
+                openLeftEye = it.getBoolean(R.styleable.CustomView_emojiLeftEyeOpen, true)
+                smile = it.getInt(R.styleable.CustomView_emojiSmile, 0)
+            }
         } finally {
             typedArray?.recycle()
         }
+
+
     }
 
     private fun setupPaint() {
-        paint = Paint()
-        paint.style = Paint.Style.FILL
-        paint.color = color ?: COLOR_YELLOW
-    }
+        paintHead = Paint()
+        paintHead.style = Paint.Style.FILL
+        paintHead.color = color
 
+        paintParts = Paint()
+        paintParts.style = Paint.Style.STROKE
+        paintParts.strokeWidth = STROKE_EYE
+        paintParts.color = Color.BLACK
+
+    }
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
+        canvas?.let {
+            it.drawCircle(radius, radius, radius, paintHead)
 
-        val radius = if (width <= height) (width / 2).toFloat() else (height / 2).toFloat()
-        canvas?.drawCircle(radius, radius, radius, paint)
+            if (openRightEye) drawSimpleArc(it, rightEyeOval, SWEEP_ANGLE_OPEN_EYE)
+            else drawSimpleArc(it, rightEyeOval, SWEEP_ANGLE_CLOSE_EYE)
+
+            if (openLeftEye) drawSimpleArc(it, leftEyeOval, SWEEP_ANGLE_OPEN_EYE)
+            else drawSimpleArc(it, leftEyeOval, SWEEP_ANGLE_CLOSE_EYE)
+        }
+    }
+
+    private fun drawSimpleArc(canvas: Canvas, oval: RectF, angle: Float) {
+        canvas.drawArc(oval, START_ANGLE_EYE, angle, false, paintParts)
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
+        radius = if (width <= height) (width / 2).toFloat() else (height / 2).toFloat()
+        val eyeRadius = radius / 4F
+        val rightEyeX = radius / 1.5F
+        val rightEyeY = radius / 1.5F
+        rightEyeOval = RectF(rightEyeX - eyeRadius,
+                rightEyeY - eyeRadius,
+                rightEyeX + eyeRadius,
+                rightEyeY + eyeRadius)
+        val leftEyeX = 2 * radius / 1.5F
+        val leftEyeY = radius / 1.5F
+        leftEyeOval = RectF(leftEyeX - eyeRadius,
+                leftEyeY - eyeRadius,
+                leftEyeX + eyeRadius,
+                leftEyeY + eyeRadius)
     }
 }
