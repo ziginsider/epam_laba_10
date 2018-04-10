@@ -14,19 +14,35 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 
+/**
+ * Constants for drawing
+ */
 const val STROKE_EYE = 5F
 const val START_ANGLE_EYE = 15F
 const val SWEEP_ANGLE_CLOSE_EYE = 150F
 const val SWEEP_ANGLE_OPEN_EYE = 360F
 const val START_ANGLE_SMILE = 30F
 const val SWEEP_ANGLE_SMILE = 120F
-
+/**
+ * Constants for instance saving
+ */
 const val INSTANCE_STATE = "instanceState"
 const val INSTANCE_COLOR = "instanceColor"
 const val INSTANCE_RIGHT_EYE = "instanceRightEye"
 const val INSTANCE_LEFT_EYE = "instanceLeftEye"
 const val INSTANCE_SMILE = "instanceSmile"
 
+/**
+ * Implementation View emoji smiley with opened and closed eyes and happy and sad smile.
+ * Smiley can have different head color.
+ *
+ * <p>Opened methods to interact with View place in {@link EmojiSmiley}. View implements view state
+ * saving and restoration. View implements internal click handler, which changes smile from the sad
+ * one to the happy one and vice versa.
+ *
+ * @since 2018-04-10
+ * @author Alex Kisel
+ */
 class CustomView : View, EmojiSmiley {
     private var color: Int = 0
     private var openRightEye: Boolean = false
@@ -89,15 +105,14 @@ class CustomView : View, EmojiSmiley {
 
     override fun onRestoreInstanceState(state: Parcelable?) {
         if (state is Bundle) {
-            val bundle = state
-            with(bundle) {
+            with(state) {
                 color = getInt(INSTANCE_COLOR)
                 setupPaint()
                 openRightEye = getBoolean(INSTANCE_RIGHT_EYE)
                 openLeftEye = getBoolean(INSTANCE_LEFT_EYE)
                 smile = getInt(INSTANCE_SMILE)
             }
-            super.onRestoreInstanceState(bundle.getParcelable(INSTANCE_STATE))
+            super.onRestoreInstanceState(state.getParcelable(INSTANCE_STATE))
         } else {
             super.onRestoreInstanceState(state)
         }

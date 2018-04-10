@@ -22,5 +22,4 @@
         android:icon="@drawable/ic_smile"
         android:title="change smile"
         app:showAsAction="ifRoom" />
-
 </menu>

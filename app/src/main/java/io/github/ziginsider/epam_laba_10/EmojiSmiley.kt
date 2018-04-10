@@ -46,5 +46,5 @@ interface EmojiSmiley {
     /**
      * @return <tt>true</tt> if the smiley is happy, <tt>false</tt> if the smiley is sad
      */
-    fun isSmileHappy():Boolean
+    fun isSmileHappy(): Boolean
 }
