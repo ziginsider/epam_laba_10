@@ -89,10 +89,12 @@ class CustomView : View, EmojiSmiley {
     override fun onRestoreInstanceState(state: Parcelable?) {
         if (state is Bundle) {
             val bundle = state
-
-
-
-
+            with(bundle) {
+                color = getInt(INSTANCE_COLOR)
+                openRightEye = getBoolean(INSTANCE_RIGHT_EYE)
+                openLeftEye = getBoolean(INSTANCE_LEFT_EYE)
+                smile = getInt(INSTANCE_SMILE)
+            }
             super.onRestoreInstanceState(bundle.getParcelable(INSTANCE_STATE))
         } else {
             super.onRestoreInstanceState(state)
