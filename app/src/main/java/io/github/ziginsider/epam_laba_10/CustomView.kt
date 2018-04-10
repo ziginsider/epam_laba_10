@@ -19,8 +19,7 @@ const val START_ANGLE_SMILE = 30F
 const val SWEEP_ANGLE_SMILE = 120F
 
 
-class CustomView : View {
-
+class CustomView : View, EmojiSmiley {
     private var color: Int = 0
     private var openRightEye: Boolean = false
     private var openLeftEye: Boolean = false
@@ -32,7 +31,6 @@ class CustomView : View {
     private lateinit var leftEyeOval: RectF
     private lateinit var smileHappyOval: RectF
     private lateinit var smileSadOval: RectF
-
 
     @JvmOverloads
     constructor(context: Context?, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
@@ -47,7 +45,6 @@ class CustomView : View {
         initAttrs(attrs)
         setupPaint()
     }
-
 
     private fun initAttrs(attrs: AttributeSet?) {
         val typedArray = context?.obtainStyledAttributes(attrs, R.styleable.CustomView, 0, 0)
@@ -68,7 +65,6 @@ class CustomView : View {
         paintHead = Paint()
         paintHead.style = Paint.Style.FILL
         paintHead.color = color
-
         paintParts = Paint()
         paintParts.style = Paint.Style.STROKE
         paintParts.strokeWidth = STROKE_EYE
@@ -95,7 +91,7 @@ class CustomView : View {
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        radius = if (width <= height) (width / 2).toFloat() else (height / 2).toFloat()
+        radius = if (w <= h) (w / 2).toFloat() else (h / 2).toFloat()
         rightEyeOval = generateArcOvalF(radius / 1.5F, radius / 1.5F, radius / 4F)
         leftEyeOval = generateArcOvalF(2 * radius / 1.5F, radius / 1.5F, radius / 4F)
         if (smile == 0)
@@ -110,4 +106,30 @@ class CustomView : View {
 
     private fun generateArcOvalF(x: Float, y: Float, radius: Float)
             = RectF(x - radius, y - radius, x + radius, y + radius)
+
+    override fun setColor(color: Int) {
+        this.color = color
+        invalidate()
+    }
+
+    override fun setLeftEyeOpen(state: Boolean) {
+        openLeftEye = state
+        invalidate()
+    }
+
+    override fun getLeftEyeOpen() = openLeftEye
+
+    override fun setRightEyeOpen(state: Boolean) {
+        openRightEye = state
+        invalidate()
+    }
+
+    override fun getRightEyeOpen() = openRightEye
+
+    override fun setSmileState(state: Boolean) {
+        smile = if (state) 0 else 1
+        invalidate()
+    }
+
+    override fun getSmileState() = smile == 0
 }

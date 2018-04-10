@@ -7,14 +7,24 @@
     tools:context=".MainActivity">
 
     <io.github.ziginsider.epam_laba_10.CustomView
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
         app:emojiColor="#ffff00"
         app:emojiLeftEyeOpen="false"
         app:emojiRightEyeOpen="false"
-        app:emojiSmile="sad"
+        app:emojiSmile="happy"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:itemBackground="@color/colorPrimary"
+        app:itemIconTint="@drawable/nav_item_control_state"
+        app:itemTextColor="@drawable/nav_item_control_state"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/bottom_navigation_menu" />
 </android.support.constraint.ConstraintLayout>

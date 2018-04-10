@@ -1,7 +1,5 @@
 package io.github.ziginsider.epam_laba_10
 
-import android.graphics.Color
-
 /**
  * An interface for a view implementing an emoji smiley
  *
@@ -12,14 +10,14 @@ interface EmojiSmiley {
     /**
      * Set color for emoji head
      */
-    fun setColor(color: Color)
+    fun setColor(color: Int)
 
     /**
      * Set left eye open state
      * <p><tt>true</tt> - open
      * <p><tt>false</tt> - close
      */
-    fun setLeftEyeOpen(open: Boolean)
+    fun setLeftEyeOpen(state: Boolean)
 
     /**
      * @return <tt>true</tt> if left eye open, <tt>false</tt> if left eye close
@@ -31,7 +29,7 @@ interface EmojiSmiley {
      * <p><tt>true</tt> - open
      * <p><tt>false</tt> - close
      */
-    fun setRightEyeOpen(open: Boolean)
+    fun setRightEyeOpen(state: Boolean)
 
     /**
      * @return <tt>true</tt> if right eye open, <tt>false</tt> if right eye close
@@ -43,7 +41,7 @@ interface EmojiSmiley {
      * <p><tt>true</tt> - happy
      * <p><tt>false</tt> - sad
      */
-    fun setSmileState(happy: Boolean)
+    fun setSmileState(state: Boolean)
 
     /**
      * @return <tt>true</tt> if the smiley is happy, <tt>false</tt> if the smiley is sad
