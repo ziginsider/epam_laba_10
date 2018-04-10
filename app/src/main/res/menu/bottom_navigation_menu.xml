@@ -3,21 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/sortName"
+        android:id="@+id/setColor"
         android:enabled="true"
         android:icon="@drawable/ic_color"
         android:title="random color"
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/sortAge"
+        android:id="@+id/changeEyes"
         android:enabled="true"
         android:icon="@drawable/ic_eye"
         android:title="change eyes"
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/randomUsers"
+        android:id="@+id/changeSmile"
         android:enabled="true"
         android:icon="@drawable/ic_smile"
         android:title="change smile"

@@ -7,6 +7,8 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.os.Build
+import android.os.Bundle
+import android.os.Parcelable
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
@@ -18,6 +20,11 @@ const val SWEEP_ANGLE_OPEN_EYE = 360F
 const val START_ANGLE_SMILE = 30F
 const val SWEEP_ANGLE_SMILE = 120F
 
+const val INSTANCE_STATE = "instanceState"
+const val INSTANCE_COLOR = "instanceColor"
+const val INSTANCE_RIGHT_EYE = "instanceRightEye"
+const val INSTANCE_LEFT_EYE = "instanceLeftEye"
+const val INSTANCE_SMILE = "instanceSmile"
 
 class CustomView : View, EmojiSmiley {
     private var color: Int = 0
@@ -35,40 +42,15 @@ class CustomView : View, EmojiSmiley {
     @JvmOverloads
     constructor(context: Context?, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
             : super(context, attrs, defStyleAttr) {
-        initAttrs(attrs)
+        setupAttrs(attrs)
         setupPaint()
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int)
             : super(context, attrs, defStyleAttr, defStyleRes) {
-        initAttrs(attrs)
+        setupAttrs(attrs)
         setupPaint()
-    }
-
-    private fun initAttrs(attrs: AttributeSet?) {
-        val typedArray = context?.obtainStyledAttributes(attrs, R.styleable.CustomView, 0, 0)
-        try {
-            typedArray?.let {
-                Log.d("TAG", "initAttr")
-                color = it.getColor(R.styleable.CustomView_emojiColor, Color.YELLOW)
-                openRightEye = it.getBoolean(R.styleable.CustomView_emojiRightEyeOpen, true)
-                openLeftEye = it.getBoolean(R.styleable.CustomView_emojiLeftEyeOpen, true)
-                smile = it.getInt(R.styleable.CustomView_emojiSmile, 0)
-            }
-        } finally {
-            typedArray?.recycle()
-        }
-    }
-
-    private fun setupPaint() {
-        paintHead = Paint()
-        paintHead.style = Paint.Style.FILL
-        paintHead.color = color
-        paintParts = Paint()
-        paintParts.style = Paint.Style.STROKE
-        paintParts.strokeWidth = STROKE_EYE
-        paintParts.color = Color.BLACK
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -91,13 +73,63 @@ class CustomView : View, EmojiSmiley {
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        radius = if (w <= h) (w / 2).toFloat() else (h / 2).toFloat()
+        setupSizes(w, h)
+    }
+
+    override fun onSaveInstanceState(): Parcelable {
+        val bundle = Bundle()
+        bundle.putParcelable(INSTANCE_STATE, super.onSaveInstanceState())
+        bundle.putInt(INSTANCE_COLOR, color)
+        bundle.putBoolean(INSTANCE_RIGHT_EYE, openRightEye)
+        bundle.putBoolean(INSTANCE_LEFT_EYE, openLeftEye)
+        bundle.putInt(INSTANCE_SMILE, smile)
+        return bundle
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        if (state is Bundle) {
+            val bundle = state
+
+
+
+
+            super.onRestoreInstanceState(bundle.getParcelable(INSTANCE_STATE))
+        } else {
+            super.onRestoreInstanceState(state)
+        }
+    }
+
+    private fun setupPaint() {
+        paintHead = Paint()
+        paintHead.style = Paint.Style.FILL
+        paintHead.color = color
+        paintParts = Paint()
+        paintParts.style = Paint.Style.STROKE
+        paintParts.strokeWidth = STROKE_EYE
+        paintParts.color = Color.BLACK
+    }
+
+    private fun setupAttrs(attrs: AttributeSet?) {
+        val typedArray = context?.obtainStyledAttributes(attrs, R.styleable.CustomView, 0, 0)
+        try {
+            typedArray?.let {
+                Log.d("TAG", "initAttr")
+                color = it.getColor(R.styleable.CustomView_emojiColor, Color.YELLOW)
+                openRightEye = it.getBoolean(R.styleable.CustomView_emojiRightEyeOpen, true)
+                openLeftEye = it.getBoolean(R.styleable.CustomView_emojiLeftEyeOpen, true)
+                smile = it.getInt(R.styleable.CustomView_emojiSmile, 0)
+            }
+        } finally {
+            typedArray?.recycle()
+        }
+    }
+
+    private fun setupSizes(width: Int, height: Int) {
+        radius = if (width <= height) (width / 2).toFloat() else (height / 2).toFloat()
         rightEyeOval = generateArcOvalF(radius / 1.5F, radius / 1.5F, radius / 4F)
         leftEyeOval = generateArcOvalF(2 * radius / 1.5F, radius / 1.5F, radius / 4F)
-        if (smile == 0)
-            smileHappyOval = generateArcOvalF(radius, radius, radius / 1.5F)
-        else
-            smileSadOval = generateArcOvalF(radius, radius * 2, radius / 1.5F)
+        smileHappyOval = generateArcOvalF(radius, radius, radius / 1.5F)
+        smileSadOval = generateArcOvalF(radius, radius * 2, radius / 1.5F)
     }
 
     private fun drawSimpleArc(canvas: Canvas, oval: RectF, angle: Float) {
@@ -109,6 +141,7 @@ class CustomView : View, EmojiSmiley {
 
     override fun setColor(color: Int) {
         this.color = color
+        setupPaint()
         invalidate()
     }
 
@@ -117,19 +150,19 @@ class CustomView : View, EmojiSmiley {
         invalidate()
     }
 
-    override fun getLeftEyeOpen() = openLeftEye
+    override fun isLeftEyeOpen() = openLeftEye
 
     override fun setRightEyeOpen(state: Boolean) {
         openRightEye = state
         invalidate()
     }
 
-    override fun getRightEyeOpen() = openRightEye
+    override fun isRightEyeOpen() = openRightEye
 
     override fun setSmileState(state: Boolean) {
         smile = if (state) 0 else 1
         invalidate()
     }
 
-    override fun getSmileState() = smile == 0
+    override fun isSmileHappy() = smile == 0
 }

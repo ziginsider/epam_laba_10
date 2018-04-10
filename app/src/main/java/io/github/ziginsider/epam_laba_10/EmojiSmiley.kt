@@ -22,7 +22,7 @@ interface EmojiSmiley {
     /**
      * @return <tt>true</tt> if left eye open, <tt>false</tt> if left eye close
      */
-    fun getLeftEyeOpen(): Boolean
+    fun isLeftEyeOpen(): Boolean
 
     /**
      * Set right eye open state
@@ -34,7 +34,7 @@ interface EmojiSmiley {
     /**
      * @return <tt>true</tt> if right eye open, <tt>false</tt> if right eye close
      */
-    fun getRightEyeOpen(): Boolean
+    fun isRightEyeOpen(): Boolean
 
     /**
      * Set smiley state
@@ -46,5 +46,5 @@ interface EmojiSmiley {
     /**
      * @return <tt>true</tt> if the smiley is happy, <tt>false</tt> if the smiley is sad
      */
-    fun getSmileState():Boolean
+    fun isSmileHappy():Boolean
 }
