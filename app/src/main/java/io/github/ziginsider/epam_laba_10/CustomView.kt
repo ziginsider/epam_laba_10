@@ -34,7 +34,6 @@ class CustomView : View {
     private lateinit var smileSadOval: RectF
 
 
-
     @JvmOverloads
     constructor(context: Context?, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
             : super(context, attrs, defStyleAttr) {
