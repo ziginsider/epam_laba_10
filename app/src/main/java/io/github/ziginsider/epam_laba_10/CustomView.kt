@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.util.AttributeSet
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 
 const val STROKE_EYE = 5F
@@ -91,6 +92,7 @@ class CustomView : View, EmojiSmiley {
             val bundle = state
             with(bundle) {
                 color = getInt(INSTANCE_COLOR)
+                setupPaint()
                 openRightEye = getBoolean(INSTANCE_RIGHT_EYE)
                 openLeftEye = getBoolean(INSTANCE_LEFT_EYE)
                 smile = getInt(INSTANCE_SMILE)
@@ -99,6 +101,16 @@ class CustomView : View, EmojiSmiley {
         } else {
             super.onRestoreInstanceState(state)
         }
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        val result = super.onTouchEvent(event)
+        if (event?.action == MotionEvent.ACTION_DOWN) {
+            smile = if (smile == 0) 1 else 0
+            invalidate()
+            return true
+        }
+        return result
     }
 
     private fun setupPaint() {
