@@ -36,7 +36,7 @@ const val INSTANCE_SMILE = "instanceSmile"
  * Implementation View emoji smiley with opened and closed eyes and happy and sad smile.
  * Smiley can have different head color.
  *
- * <p>Opened methods to interact with View place in {@link EmojiSmiley}. View implements view state
+ * Opened methods to interact with View place in [EmojiSmiley]. View implements view state
  * saving and restoration. View implements internal click handler, which changes smile from the sad
  * one to the happy one and vice versa.
  *
