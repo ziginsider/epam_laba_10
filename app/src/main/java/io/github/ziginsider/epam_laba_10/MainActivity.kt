@@ -25,12 +25,10 @@ class MainActivity : AppCompatActivity() {
                     emojiSmile.setColor(randomColor())
                 }
                 R.id.changeEyes -> {
-                    if (emojiSmile.isLeftEyeOpen()) {
-                        emojiSmile.setLeftEyeOpen(false)
-                        emojiSmile.setRightEyeOpen(false)
+                    if (emojiSmile.areEyesOpen()) {
+                        emojiSmile.setEyesOpenState(false)
                     } else {
-                        emojiSmile.setLeftEyeOpen(true)
-                        emojiSmile.setRightEyeOpen(true)
+                        emojiSmile.setEyesOpenState(true)
                     }
                 }
                 R.id.changeSmile -> {

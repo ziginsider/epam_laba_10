@@ -46,7 +46,7 @@ const val INSTANCE_SMILE = "instanceSmile"
 class CustomView : View, EmojiSmiley {
     private var color: Int = 0
     private var openRightEye: Boolean = false
-    private var openLeftEye: Boolean = false
+    private var openEyesState: Boolean = false
     private var smile: Int = 0
     private var radius: Float = 0F
     private lateinit var paintHead: Paint
@@ -75,11 +75,14 @@ class CustomView : View, EmojiSmiley {
         canvas?.let {
             it.drawCircle(radius, radius, radius, paintHead)
 
-            if (openRightEye) drawSimpleArc(it, rightEyeOval, SWEEP_ANGLE_OPEN_EYE)
-            else drawSimpleArc(it, rightEyeOval, SWEEP_ANGLE_CLOSE_EYE)
-
-            if (openLeftEye) drawSimpleArc(it, leftEyeOval, SWEEP_ANGLE_OPEN_EYE)
-            else drawSimpleArc(it, leftEyeOval, SWEEP_ANGLE_CLOSE_EYE)
+            if (openEyesState) {
+                drawSimpleArc(it, leftEyeOval, SWEEP_ANGLE_OPEN_EYE)
+                drawSimpleArc(it, rightEyeOval, SWEEP_ANGLE_OPEN_EYE)
+            }
+            else {
+                drawSimpleArc(it, leftEyeOval, SWEEP_ANGLE_CLOSE_EYE)
+                drawSimpleArc(it, rightEyeOval, SWEEP_ANGLE_CLOSE_EYE)
+            }
 
             if (smile == 0)
                 it.drawArc(smileHappyOval, START_ANGLE_SMILE, SWEEP_ANGLE_SMILE, false, paintParts)
@@ -98,7 +101,7 @@ class CustomView : View, EmojiSmiley {
         bundle.putParcelable(INSTANCE_STATE, super.onSaveInstanceState())
         bundle.putInt(INSTANCE_COLOR, color)
         bundle.putBoolean(INSTANCE_RIGHT_EYE, openRightEye)
-        bundle.putBoolean(INSTANCE_LEFT_EYE, openLeftEye)
+        bundle.putBoolean(INSTANCE_LEFT_EYE, openEyesState)
         bundle.putInt(INSTANCE_SMILE, smile)
         return bundle
     }
@@ -109,7 +112,7 @@ class CustomView : View, EmojiSmiley {
                 color = getInt(INSTANCE_COLOR)
                 setupPaint()
                 openRightEye = getBoolean(INSTANCE_RIGHT_EYE)
-                openLeftEye = getBoolean(INSTANCE_LEFT_EYE)
+                openEyesState = getBoolean(INSTANCE_LEFT_EYE)
                 smile = getInt(INSTANCE_SMILE)
             }
             super.onRestoreInstanceState(state.getParcelable(INSTANCE_STATE))
@@ -144,8 +147,7 @@ class CustomView : View, EmojiSmiley {
             typedArray?.let {
                 Log.d("TAG", "initAttr")
                 color = it.getColor(R.styleable.CustomView_emojiColor, Color.YELLOW)
-                openRightEye = it.getBoolean(R.styleable.CustomView_emojiRightEyeOpen, true)
-                openLeftEye = it.getBoolean(R.styleable.CustomView_emojiLeftEyeOpen, true)
+                openEyesState = it.getBoolean(R.styleable.CustomView_emojiEyesOpen, true)
                 smile = it.getInt(R.styleable.CustomView_emojiSmile, 0)
             }
         } finally {
@@ -174,19 +176,12 @@ class CustomView : View, EmojiSmiley {
         invalidate()
     }
 
-    override fun setLeftEyeOpen(state: Boolean) {
-        openLeftEye = state
+    override fun setEyesOpenState(state: Boolean) {
+        openEyesState = state
         invalidate()
     }
 
-    override fun isLeftEyeOpen() = openLeftEye
-
-    override fun setRightEyeOpen(state: Boolean) {
-        openRightEye = state
-        invalidate()
-    }
-
-    override fun isRightEyeOpen() = openRightEye
+    override fun areEyesOpen() = openEyesState
 
     override fun setSmileState(state: Boolean) {
         smile = if (state) 0 else 1

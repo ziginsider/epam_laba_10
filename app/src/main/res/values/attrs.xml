@@ -3,7 +3,7 @@
     <declare-styleable name="CustomView">
         <attr name="emojiColor" format="color" />
         <attr name="emojiRightEyeOpen" format="boolean" />
-        <attr name="emojiLeftEyeOpen" format="boolean" />
+        <attr name="CustomView_emojiEyesOpen" format="boolean" />
         <attr name="emojiSmile" format="enum">
             <enum name="happy" value="0" />
             <enum name="sad" value="1" />

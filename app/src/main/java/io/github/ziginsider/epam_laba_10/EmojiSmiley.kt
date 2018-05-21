@@ -17,24 +17,12 @@ interface EmojiSmiley {
      * - **true** - open
      * - **false** - close
      */
-    fun setLeftEyeOpen(state: Boolean)
+    fun setEyesOpenState(state: Boolean)
 
     /**
      * @return **true** if left eye open, **false** if left eye close
      */
-    fun isLeftEyeOpen(): Boolean
-
-    /**
-     * Set right eye open state
-     * - **true** - open
-     * - **false** - close
-     */
-    fun setRightEyeOpen(state: Boolean)
-
-    /**
-     * @return **true** if right eye open, **false** if right eye close
-     */
-    fun isRightEyeOpen(): Boolean
+    fun areEyesOpen(): Boolean
 
     /**
      * Set smiley state
