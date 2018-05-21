@@ -25,11 +25,7 @@ class MainActivity : AppCompatActivity() {
                     emojiSmile.setColor(randomColor())
                 }
                 R.id.changeEyes -> {
-                    if (emojiSmile.areEyesOpen()) {
-                        emojiSmile.setEyesOpenState(false)
-                    } else {
-                        emojiSmile.setEyesOpenState(true)
-                    }
+                    emojiSmile.openEyesState = !emojiSmile.openEyesState
                 }
                 R.id.changeSmile -> {
                     if (emojiSmile.isSmileHappy()) emojiSmile.setSmileState(false)

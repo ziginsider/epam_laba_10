@@ -28,8 +28,7 @@ const val SWEEP_ANGLE_SMILE = 120F
  */
 const val INSTANCE_STATE = "instanceState"
 const val INSTANCE_COLOR = "instanceColor"
-const val INSTANCE_RIGHT_EYE = "instanceRightEye"
-const val INSTANCE_LEFT_EYE = "instanceLeftEye"
+const val INSTANCE_OPEN_EYES = "instanceLeftEye"
 const val INSTANCE_SMILE = "instanceSmile"
 
 /**
@@ -45,8 +44,11 @@ const val INSTANCE_SMILE = "instanceSmile"
  */
 class CustomView : View, EmojiSmiley {
     private var color: Int = 0
-    private var openRightEye: Boolean = false
-    private var openEyesState: Boolean = false
+    var openEyesState: Boolean = false
+        set(value) {
+            field = value
+            invalidate()
+        }
     private var smile: Int = 0
     private var radius: Float = 0F
     private lateinit var paintHead: Paint
@@ -68,67 +70,6 @@ class CustomView : View, EmojiSmiley {
             : super(context, attrs, defStyleAttr, defStyleRes) {
         setupAttrs(attrs)
         setupPaint()
-    }
-
-    override fun onDraw(canvas: Canvas?) {
-        super.onDraw(canvas)
-        canvas?.let {
-            it.drawCircle(radius, radius, radius, paintHead)
-
-            if (openEyesState) {
-                drawSimpleArc(it, leftEyeOval, SWEEP_ANGLE_OPEN_EYE)
-                drawSimpleArc(it, rightEyeOval, SWEEP_ANGLE_OPEN_EYE)
-            }
-            else {
-                drawSimpleArc(it, leftEyeOval, SWEEP_ANGLE_CLOSE_EYE)
-                drawSimpleArc(it, rightEyeOval, SWEEP_ANGLE_CLOSE_EYE)
-            }
-
-            if (smile == 0)
-                it.drawArc(smileHappyOval, START_ANGLE_SMILE, SWEEP_ANGLE_SMILE, false, paintParts)
-            else it.drawArc(smileSadOval, -1 * START_ANGLE_SMILE, -1 * SWEEP_ANGLE_SMILE,
-                    false, paintParts)
-        }
-    }
-
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-        setupSizes(w, h)
-    }
-
-    override fun onSaveInstanceState(): Parcelable {
-        val bundle = Bundle()
-        bundle.putParcelable(INSTANCE_STATE, super.onSaveInstanceState())
-        bundle.putInt(INSTANCE_COLOR, color)
-        bundle.putBoolean(INSTANCE_RIGHT_EYE, openRightEye)
-        bundle.putBoolean(INSTANCE_LEFT_EYE, openEyesState)
-        bundle.putInt(INSTANCE_SMILE, smile)
-        return bundle
-    }
-
-    override fun onRestoreInstanceState(state: Parcelable?) {
-        if (state is Bundle) {
-            with(state) {
-                color = getInt(INSTANCE_COLOR)
-                setupPaint()
-                openRightEye = getBoolean(INSTANCE_RIGHT_EYE)
-                openEyesState = getBoolean(INSTANCE_LEFT_EYE)
-                smile = getInt(INSTANCE_SMILE)
-            }
-            super.onRestoreInstanceState(state.getParcelable(INSTANCE_STATE))
-        } else {
-            super.onRestoreInstanceState(state)
-        }
-    }
-
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        val result = super.onTouchEvent(event)
-        if (event?.action == MotionEvent.ACTION_DOWN) {
-            smile = if (smile == 0) 1 else 0
-            invalidate()
-            return true
-        }
-        return result
     }
 
     private fun setupPaint() {
@@ -161,6 +102,66 @@ class CustomView : View, EmojiSmiley {
         leftEyeOval = generateArcOvalF(2 * radius / 1.5F, radius / 1.5F, radius / 4F)
         smileHappyOval = generateArcOvalF(radius, radius, radius / 1.5F)
         smileSadOval = generateArcOvalF(radius, radius * 2, radius / 1.5F)
+    }
+
+    override fun onDraw(canvas: Canvas?) {
+        super.onDraw(canvas)
+        canvas?.let {
+            it.drawCircle(radius, radius, radius, paintHead)
+
+            if (openEyesState) {
+                drawSimpleArc(it, leftEyeOval, SWEEP_ANGLE_OPEN_EYE)
+                drawSimpleArc(it, rightEyeOval, SWEEP_ANGLE_OPEN_EYE)
+            } else {
+                drawSimpleArc(it, leftEyeOval, SWEEP_ANGLE_CLOSE_EYE)
+                drawSimpleArc(it, rightEyeOval, SWEEP_ANGLE_CLOSE_EYE)
+            }
+
+            if (smile == 0) {
+                it.drawArc(smileHappyOval, START_ANGLE_SMILE, SWEEP_ANGLE_SMILE, false, paintParts)
+            } else {
+                it.drawArc(smileSadOval, -1 * START_ANGLE_SMILE, -1 * SWEEP_ANGLE_SMILE,
+                        false, paintParts)
+            }
+        }
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        setupSizes(w, h)
+    }
+
+    override fun onSaveInstanceState(): Parcelable {
+        val bundle = Bundle()
+        bundle.putParcelable(INSTANCE_STATE, super.onSaveInstanceState())
+        bundle.putInt(INSTANCE_COLOR, color)
+        bundle.putBoolean(INSTANCE_OPEN_EYES, openEyesState)
+        bundle.putInt(INSTANCE_SMILE, smile)
+        return bundle
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        if (state is Bundle) {
+            with(state) {
+                color = getInt(INSTANCE_COLOR)
+                setupPaint()
+                openEyesState = getBoolean(INSTANCE_OPEN_EYES)
+                smile = getInt(INSTANCE_SMILE)
+            }
+            super.onRestoreInstanceState(state.getParcelable(INSTANCE_STATE))
+        } else {
+            super.onRestoreInstanceState(state)
+        }
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        val result = super.onTouchEvent(event)
+        if (event?.action == MotionEvent.ACTION_DOWN) {
+            smile = if (smile == 0) 1 else 0
+            invalidate()
+            return true
+        }
+        return result
     }
 
     private fun drawSimpleArc(canvas: Canvas, oval: RectF, angle: Float) {
