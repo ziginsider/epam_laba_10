@@ -6,7 +6,6 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
-import android.graphics.Typeface.NORMAL
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
@@ -15,6 +14,8 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.view.GestureDetector
+import android.support.v4.view.GestureDetectorCompat
 
 /**
  * Constants for drawing
@@ -54,35 +55,33 @@ class CustomView : View, EmojiSmiley {
     @Smile
     private var smile = HAPPY
     private var radius = 0F
-    private lateinit var paintHead: Paint
-    private lateinit var paintParts: Paint
-    private lateinit var rightEyeOval: RectF
-    private lateinit var leftEyeOval: RectF
-    private lateinit var smileHappyOval: RectF
-    private lateinit var smileSadOval: RectF
+    private var paintHead = Paint().apply {
+        style = Paint.Style.FILL
+        color = Color.YELLOW
+    }
+    private var paintParts = Paint().apply {
+        style = Paint.Style.STROKE
+        strokeWidth = STROKE_EYE
+        color = Color.BLACK
+    }
+    private var rightEyeOval = RectF()
+    private var leftEyeOval = RectF()
+    private var smileHappyOval = RectF()
+    private var smileSadOval = RectF()
+
+    private val touchDetector: GestureDetectorCompat
+            = GestureDetectorCompat(context, MyGestureListener())
 
     @JvmOverloads
     constructor(context: Context?, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
             : super(context, attrs, defStyleAttr) {
         setupAttrs(attrs)
-        setupPaint()
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int)
             : super(context, attrs, defStyleAttr, defStyleRes) {
         setupAttrs(attrs)
-        setupPaint()
-    }
-
-    private fun setupPaint() {
-        paintHead = Paint()
-        paintHead.style = Paint.Style.FILL
-        paintHead.color = color
-        paintParts = Paint()
-        paintParts.style = Paint.Style.STROKE
-        paintParts.strokeWidth = STROKE_EYE
-        paintParts.color = Color.BLACK
     }
 
     private fun setupAttrs(attrs: AttributeSet?) {
@@ -123,11 +122,11 @@ class CustomView : View, EmojiSmiley {
             it.drawCircle(radius, radius, radius, paintHead)
 
             if (openEyesState) {
-                drawSimpleArc(it, leftEyeOval, SWEEP_ANGLE_OPEN_EYE)
-                drawSimpleArc(it, rightEyeOval, SWEEP_ANGLE_OPEN_EYE)
+                it.drawSimpleArc(leftEyeOval, SWEEP_ANGLE_OPEN_EYE)
+                it.drawSimpleArc(rightEyeOval, SWEEP_ANGLE_OPEN_EYE)
             } else {
-                drawSimpleArc(it, leftEyeOval, SWEEP_ANGLE_CLOSE_EYE)
-                drawSimpleArc(it, rightEyeOval, SWEEP_ANGLE_CLOSE_EYE)
+                it.drawSimpleArc(leftEyeOval, SWEEP_ANGLE_CLOSE_EYE)
+                it.drawSimpleArc(rightEyeOval, SWEEP_ANGLE_CLOSE_EYE)
             }
 
             if (smile == HAPPY) {
@@ -157,7 +156,7 @@ class CustomView : View, EmojiSmiley {
         if (state is Bundle) {
             with(state) {
                 color = getInt(INSTANCE_COLOR)
-                setupPaint()
+                paintHead.color = color
                 openEyesState = getBoolean(INSTANCE_OPEN_EYES)
                 smile = getInt(INSTANCE_SMILE)
             }
@@ -168,17 +167,27 @@ class CustomView : View, EmojiSmiley {
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        val result = super.onTouchEvent(event)
-        if (event?.action == MotionEvent.ACTION_DOWN) {
+        if (touchDetector.onTouchEvent(event)) return true
+        return super.onTouchEvent(event)
+    }
+
+    internal inner class MyGestureListener : GestureDetector.SimpleOnGestureListener() {
+
+        override fun onSingleTapUp(e: MotionEvent?): Boolean {
+            Log.i("TAG", "onSingleTapUp")
             smile = if (smile == HAPPY) SAD else HAPPY
             invalidate()
             return true
         }
-        return result
+
+        override fun onDown(e: MotionEvent?): Boolean {
+            Log.i("TAG", "onDown")
+            return true
+        }
     }
 
-    private fun drawSimpleArc(canvas: Canvas, oval: RectF, angle: Float) {
-        canvas.drawArc(oval, START_ANGLE_EYE, angle, false, paintParts)
+    private fun Canvas.drawSimpleArc(oval: RectF, angle: Float) {
+        drawArc(oval, START_ANGLE_EYE, angle, false, paintParts)
     }
 
     private fun generateArcOvalF(x: Float, y: Float, radius: Float)
@@ -186,7 +195,7 @@ class CustomView : View, EmojiSmiley {
 
     override fun setColor(color: Int) {
         this.color = color
-        setupPaint()
+        paintHead.color = this.color
         invalidate()
     }
 
