@@ -6,9 +6,11 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
+import android.graphics.Typeface.NORMAL
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
+import android.support.annotation.IntDef
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
@@ -43,14 +45,15 @@ const val INSTANCE_SMILE = "instanceSmile"
  * @author Alex Kisel
  */
 class CustomView : View, EmojiSmiley {
-    private var color: Int = 0
-    var openEyesState: Boolean = false
+    private var color = 0
+    var openEyesState = false
         set(value) {
             field = value
             invalidate()
         }
-    private var smile: Int = 0
-    private var radius: Float = 0F
+    @Smile
+    private var smile = HAPPY
+    private var radius = 0F
     private lateinit var paintHead: Paint
     private lateinit var paintParts: Paint
     private lateinit var rightEyeOval: RectF
@@ -96,6 +99,16 @@ class CustomView : View, EmojiSmiley {
         }
     }
 
+    companion object {
+
+        @IntDef(HAPPY.toLong(), SAD.toLong())
+        @Retention(AnnotationRetention.SOURCE)
+        annotation class Smile
+
+        const val HAPPY = 0
+        const val SAD = 1
+    }
+
     private fun setupSizes(width: Int, height: Int) {
         radius = if (width <= height) (width / 2).toFloat() else (height / 2).toFloat()
         rightEyeOval = generateArcOvalF(radius / 1.5F, radius / 1.5F, radius / 4F)
@@ -117,7 +130,7 @@ class CustomView : View, EmojiSmiley {
                 drawSimpleArc(it, rightEyeOval, SWEEP_ANGLE_CLOSE_EYE)
             }
 
-            if (smile == 0) {
+            if (smile == HAPPY) {
                 it.drawArc(smileHappyOval, START_ANGLE_SMILE, SWEEP_ANGLE_SMILE, false, paintParts)
             } else {
                 it.drawArc(smileSadOval, -1 * START_ANGLE_SMILE, -1 * SWEEP_ANGLE_SMILE,
@@ -157,7 +170,7 @@ class CustomView : View, EmojiSmiley {
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         val result = super.onTouchEvent(event)
         if (event?.action == MotionEvent.ACTION_DOWN) {
-            smile = if (smile == 0) 1 else 0
+            smile = if (smile == HAPPY) SAD else HAPPY
             invalidate()
             return true
         }
@@ -185,9 +198,9 @@ class CustomView : View, EmojiSmiley {
     override fun areEyesOpen() = openEyesState
 
     override fun setSmileState(state: Boolean) {
-        smile = if (state) 0 else 1
+        smile = if (state) HAPPY else SAD
         invalidate()
     }
 
-    override fun isSmileHappy() = smile == 0
+    override fun isSmileHappy() = smile == HAPPY
 }
