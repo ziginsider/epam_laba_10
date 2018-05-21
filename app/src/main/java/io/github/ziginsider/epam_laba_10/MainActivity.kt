@@ -1,11 +1,10 @@
 package io.github.ziginsider.epam_laba_10
 
-import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import io.github.ziginsider.epam_laba_10.utils.randomColor
 import kotlinx.android.synthetic.main.activity_main.*
-import java.util.*
 
 /**
  * Activity that displays custom view emoji smiley and implements navigation bottom view
@@ -20,16 +19,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val rnd = Random()
-        Color.rgb(rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
-
         bottomNavigation.setOnNavigationItemSelectedListener { item: MenuItem ->
             when (item.itemId) {
                 R.id.setColor -> {
-                    emojiSmile.setColor(Color.rgb(
-                            rnd.nextInt(256),
-                            rnd.nextInt(256),
-                            rnd.nextInt(256)))
+                    emojiSmile.setColor(randomColor())
                 }
                 R.id.changeEyes -> {
                     if (emojiSmile.isLeftEyeOpen()) {
