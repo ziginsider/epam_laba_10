@@ -8,31 +8,23 @@ package io.github.ziginsider.epam_laba_10
  */
 interface EmojiSmiley {
     /**
-     * Set color for emoji head
+     * sets sad if the smiley is happy, sets happy if the smiley is sad
      */
-    fun setColor(color: Int)
+    fun reverseSmile()
 
     /**
-     * Set left eye open state
-     * - **true** - open
-     * - **false** - close
+     * Head Color of Emoji
      */
-    fun setEyesOpenState(state: Boolean)
+    var colorHead: Int
 
     /**
-     * @return **true** if left eye open, **false** if left eye close
+     * Keeps eyes state
      */
-    fun areEyesOpen(): Boolean
+    var openEyesState: Boolean
 
     /**
-     * Set smiley state
-     * - **true** - happy
-     * - **false** - sad
+     * Keeps smile state
      */
-    fun setSmileState(state: Boolean)
+    var smile: Int
 
-    /**
-     * @return **true** if the smiley is happy, **false** if the smiley is sad
-     */
-    fun isSmileHappy(): Boolean
 }

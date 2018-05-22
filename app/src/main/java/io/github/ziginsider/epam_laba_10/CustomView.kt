@@ -1,5 +1,6 @@
 package io.github.ziginsider.epam_laba_10
 
+import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.content.Context
 import android.graphics.Canvas
@@ -20,7 +21,7 @@ import io.github.ziginsider.epam_laba_10.utils.use
 
 /**
  * Implementation View emoji smiley with opened and closed eyes and happy and sad smile.
- * Smiley can have different head color.
+ * Smiley can have different head colorHead.
  *
  * Opened methods to interact with View place in [EmojiSmiley]. View implements view state
  * saving and restoration. View implements internal click handler, which changes smile from the sad
@@ -30,28 +31,44 @@ import io.github.ziginsider.epam_laba_10.utils.use
  * @author Alex Kisel
  */
 class CustomView : View, EmojiSmiley {
-    private var color = 0
-    var openEyesState = false
-        set(value) {
-            field = value
-            invalidate()
-        }
-    @Smile
-    private var smile = HAPPY
+
     private var radius = 0F
+
     private var paintHead = Paint().apply {
         style = Paint.Style.FILL
         color = Color.YELLOW
     }
+
     private var paintParts = Paint().apply {
         style = Paint.Style.STROKE
         strokeWidth = STROKE_EYE
         color = Color.BLACK
     }
+
     private var rightEyeOval = RectF()
     private var leftEyeOval = RectF()
     private var smileHappyOval = RectF()
     private var smileSadOval = RectF()
+
+    override var colorHead = Color.YELLOW
+        set(value) {
+            field = value
+            paintHead.color = this.colorHead
+            invalidate()
+        }
+
+    override var openEyesState = false
+        set(value) {
+            field = value
+            invalidate()
+        }
+
+    @Smile
+    override var smile = HAPPY
+        set(value) {
+            field = value
+            invalidate()
+        }
 
     private val touchDetector: GestureDetectorCompat
             = GestureDetectorCompat(context, MyGestureListener())
@@ -68,22 +85,12 @@ class CustomView : View, EmojiSmiley {
         setupAttrs(attrs)
     }
 
+    @SuppressLint("Recycle")
     private fun setupAttrs(attrs: AttributeSet?) {
         val typedArray = context?.obtainStyledAttributes(attrs, R.styleable.CustomView, 0, 0)
-//        try {
-//            typedArray?.let {
-//                Log.d("TAG", "initAttr")
-//                color = it.getColor(R.styleable.CustomView_emojiColor, Color.YELLOW)
-//                openEyesState = it.getBoolean(R.styleable.CustomView_emojiEyesOpen, true)
-//                smile = it.getInt(R.styleable.CustomView_emojiSmile, 0)
-//            }
-//        } finally {
-//            typedArray?.recycle()
-//        }
-
         typedArray?.use {
             Log.d("TAG", "initAttr")
-            color = it.getColor(R.styleable.CustomView_emojiColor, Color.YELLOW)
+            colorHead = it.getColor(R.styleable.CustomView_emojiColor, Color.YELLOW)
             openEyesState = it.getBoolean(R.styleable.CustomView_emojiEyesOpen, true)
             smile = it.getInt(R.styleable.CustomView_emojiSmile, 0)
         }
@@ -127,7 +134,7 @@ class CustomView : View, EmojiSmiley {
     override fun onSaveInstanceState(): Parcelable {
         val bundle = Bundle()
         bundle.putParcelable(INSTANCE_STATE, super.onSaveInstanceState())
-        bundle.putInt(INSTANCE_COLOR, color)
+        bundle.putInt(INSTANCE_COLOR, colorHead)
         bundle.putBoolean(INSTANCE_OPEN_EYES, openEyesState)
         bundle.putInt(INSTANCE_SMILE, smile)
         return bundle
@@ -136,8 +143,8 @@ class CustomView : View, EmojiSmiley {
     override fun onRestoreInstanceState(state: Parcelable?) {
         if (state is Bundle) {
             with(state) {
-                color = getInt(INSTANCE_COLOR)
-                paintHead.color = color
+                colorHead = getInt(INSTANCE_COLOR)
+                paintHead.color = colorHead
                 openEyesState = getBoolean(INSTANCE_OPEN_EYES)
                 smile = getInt(INSTANCE_SMILE)
             }
@@ -174,28 +181,16 @@ class CustomView : View, EmojiSmiley {
     private fun generateArcOvalF(x: Float, y: Float, radius: Float)
             = RectF(x - radius, y - radius, x + radius, y + radius)
 
-    override fun setColor(color: Int) {
-        this.color = color
-        paintHead.color = this.color
+    override fun reverseSmile() {
+        smile = if (smile == SAD) HAPPY else SAD
         invalidate()
     }
-
-    override fun setEyesOpenState(state: Boolean) {
-        openEyesState = state
-        invalidate()
-    }
-
-    override fun areEyesOpen() = openEyesState
-
-    override fun setSmileState(state: Boolean) {
-        smile = if (state) HAPPY else SAD
-        invalidate()
-    }
-
-    override fun isSmileHappy() = smile == HAPPY
 
     companion object {
 
+        /**
+         * Declare Enum Smile: happy, sad
+         */
         @IntDef(HAPPY.toLong(), SAD.toLong())
         @Retention(AnnotationRetention.SOURCE)
         annotation class Smile
@@ -212,6 +207,7 @@ class CustomView : View, EmojiSmiley {
         const val SWEEP_ANGLE_OPEN_EYE = 360F
         const val START_ANGLE_SMILE = 30F
         const val SWEEP_ANGLE_SMILE = 120F
+
         /**
          * Constants for instance saving
          */

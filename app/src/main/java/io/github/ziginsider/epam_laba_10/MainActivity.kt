@@ -22,14 +22,13 @@ class MainActivity : AppCompatActivity() {
         bottomNavigation.setOnNavigationItemSelectedListener { item: MenuItem ->
             when (item.itemId) {
                 R.id.setColor -> {
-                    emojiSmile.setColor(randomColor())
+                    emojiSmile.colorHead = randomColor()
                 }
                 R.id.changeEyes -> {
                     emojiSmile.openEyesState = !emojiSmile.openEyesState
                 }
                 R.id.changeSmile -> {
-                    if (emojiSmile.isSmileHappy()) emojiSmile.setSmileState(false)
-                    else emojiSmile.setSmileState(true)
+                    emojiSmile.reverseSmile()
                 }
             }
             true
