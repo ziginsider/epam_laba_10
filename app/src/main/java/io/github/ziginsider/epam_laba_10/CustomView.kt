@@ -18,23 +18,6 @@ import android.view.GestureDetector
 import android.support.v4.view.GestureDetectorCompat
 
 /**
- * Constants for drawing
- */
-const val STROKE_EYE = 5F
-const val START_ANGLE_EYE = 15F
-const val SWEEP_ANGLE_CLOSE_EYE = 150F
-const val SWEEP_ANGLE_OPEN_EYE = 360F
-const val START_ANGLE_SMILE = 30F
-const val SWEEP_ANGLE_SMILE = 120F
-/**
- * Constants for instance saving
- */
-const val INSTANCE_STATE = "instanceState"
-const val INSTANCE_COLOR = "instanceColor"
-const val INSTANCE_OPEN_EYES = "instanceLeftEye"
-const val INSTANCE_SMILE = "instanceSmile"
-
-/**
  * Implementation View emoji smiley with opened and closed eyes and happy and sad smile.
  * Smiley can have different head color.
  *
@@ -96,16 +79,6 @@ class CustomView : View, EmojiSmiley {
         } finally {
             typedArray?.recycle()
         }
-    }
-
-    companion object {
-
-        @IntDef(HAPPY.toLong(), SAD.toLong())
-        @Retention(AnnotationRetention.SOURCE)
-        annotation class Smile
-
-        const val HAPPY = 0
-        const val SAD = 1
     }
 
     private fun setupSizes(width: Int, height: Int) {
@@ -212,4 +185,31 @@ class CustomView : View, EmojiSmiley {
     }
 
     override fun isSmileHappy() = smile == HAPPY
+
+    companion object {
+
+        @IntDef(HAPPY.toLong(), SAD.toLong())
+        @Retention(AnnotationRetention.SOURCE)
+        annotation class Smile
+
+        const val HAPPY = 0
+        const val SAD = 1
+
+        /**
+         * Constants for drawing
+         */
+        const val STROKE_EYE = 5F
+        const val START_ANGLE_EYE = 15F
+        const val SWEEP_ANGLE_CLOSE_EYE = 150F
+        const val SWEEP_ANGLE_OPEN_EYE = 360F
+        const val START_ANGLE_SMILE = 30F
+        const val SWEEP_ANGLE_SMILE = 120F
+        /**
+         * Constants for instance saving
+         */
+        const val INSTANCE_STATE = "instanceState"
+        const val INSTANCE_COLOR = "instanceColor"
+        const val INSTANCE_OPEN_EYES = "instanceLeftEye"
+        const val INSTANCE_SMILE = "instanceSmile"
+    }
 }
