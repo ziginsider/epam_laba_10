@@ -16,6 +16,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.GestureDetector
 import android.support.v4.view.GestureDetectorCompat
+import io.github.ziginsider.epam_laba_10.utils.use
 
 /**
  * Implementation View emoji smiley with opened and closed eyes and happy and sad smile.
@@ -69,15 +70,22 @@ class CustomView : View, EmojiSmiley {
 
     private fun setupAttrs(attrs: AttributeSet?) {
         val typedArray = context?.obtainStyledAttributes(attrs, R.styleable.CustomView, 0, 0)
-        try {
-            typedArray?.let {
-                Log.d("TAG", "initAttr")
-                color = it.getColor(R.styleable.CustomView_emojiColor, Color.YELLOW)
-                openEyesState = it.getBoolean(R.styleable.CustomView_emojiEyesOpen, true)
-                smile = it.getInt(R.styleable.CustomView_emojiSmile, 0)
-            }
-        } finally {
-            typedArray?.recycle()
+//        try {
+//            typedArray?.let {
+//                Log.d("TAG", "initAttr")
+//                color = it.getColor(R.styleable.CustomView_emojiColor, Color.YELLOW)
+//                openEyesState = it.getBoolean(R.styleable.CustomView_emojiEyesOpen, true)
+//                smile = it.getInt(R.styleable.CustomView_emojiSmile, 0)
+//            }
+//        } finally {
+//            typedArray?.recycle()
+//        }
+
+        typedArray?.use {
+            Log.d("TAG", "initAttr")
+            color = it.getColor(R.styleable.CustomView_emojiColor, Color.YELLOW)
+            openEyesState = it.getBoolean(R.styleable.CustomView_emojiEyesOpen, true)
+            smile = it.getInt(R.styleable.CustomView_emojiSmile, 0)
         }
     }
 
