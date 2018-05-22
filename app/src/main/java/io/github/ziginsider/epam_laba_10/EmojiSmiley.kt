@@ -26,5 +26,4 @@ interface EmojiSmiley {
      * Keeps smile state
      */
     var smile: Int
-
 }
